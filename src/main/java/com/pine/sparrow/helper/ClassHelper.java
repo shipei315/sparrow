@@ -20,13 +20,17 @@ public class ClassHelper {
 	}
 	
 	public static Set<Class<?>> getServiceClassSet(){
-		return getAnnotationClass(Service.class);
+		return getClassSetByAnnotation(Service.class);
 	}
 	
 	public static Set<Class<?>> getControllerClassSet(){
-		return getAnnotationClass(Controller.class);
+		return getClassSetByAnnotation(Controller.class);
 	}
 	
+	/**
+	 * 获取所有的bean class实例，包括被Controller注解和被Service注解的实例
+	 * @return
+	 */
 	public static Set<Class<?>> getBeanClassSet(){
 		Set<Class<?>> beanClassSet = new HashSet<Class<?>>();
 		beanClassSet.addAll(getControllerClassSet());
@@ -34,10 +38,25 @@ public class ClassHelper {
 		return beanClassSet;
 	}
 	
-	private static Set<Class<?>> getAnnotationClass(Class<? extends Annotation> cls){
+	public static Set<Class<?>> getClassSetByAnnotation(Class<? extends Annotation> cls){
 		Set<Class<?>> classSet = new HashSet<Class<?>>();
 		for(Class<?> tempCls : CLASS_SET){
 			if(tempCls.isAnnotationPresent(cls)){
+				classSet.add(tempCls);
+			}
+		}
+		return classSet;
+	}
+	
+	/**
+	 * 获取应用包名下某父类（或者接口）的所有子类（或者实现类）
+	 * @param superClass
+	 * @return
+	 */
+	public static Set<Class<?>> getClassSetBySuperCls(Class<?> superClass){
+		Set<Class<?>> classSet = new HashSet<Class<?>>();
+		for(Class<?> tempCls : CLASS_SET){
+			if(tempCls.isAssignableFrom(superClass) && !superClass.equals(tempCls)){
 				classSet.add(tempCls);
 			}
 		}

@@ -1,0 +1,62 @@
+package com.pine.sparrow.proxy;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.cglib.proxy.MethodProxy;
+
+/**
+ * 链式代理
+ * @author shipei.sp
+ *
+ */
+public class ProxyChain {
+	
+	private final Class<?> targetClass;
+	
+	private final Object targetObject;
+	
+	private final Method targetMethod;
+	
+	private final MethodProxy methodProxy;
+	
+	private final Object [] methodParams;
+	
+	private List<Proxy> proxyList = new ArrayList<Proxy>();
+	
+	private int proxyIndex = 0;
+	
+	public ProxyChain(Class<?> targetClass, Object targetObject, Method targetMethod, MethodProxy methodProxy, Object [] methodParams, List<Proxy> proxyList){
+		this.targetClass = targetClass;
+		this.targetObject = targetObject;
+		this.targetMethod = targetMethod;
+		this.methodProxy = methodProxy;
+		this.methodParams = methodParams;
+		this.proxyList = proxyList;
+	}
+	
+	public Class<?> getTargetClass(){
+		return targetClass;
+	}
+	
+	public Method getTargetMethod(){
+		return this.targetMethod;
+	}
+	
+	public Object [] getMethodParams(){
+		return this.methodParams;
+	}
+	
+	public Object doProxyChain() throws Throwable{
+		Object methodResult ;
+		if(proxyIndex<proxyList.size()){
+			methodResult = proxyList.get(proxyIndex++).doProxy(this);
+		} else{
+			methodResult = methodProxy.invokeSuper(targetMethod, methodParams);
+		}
+		
+		return methodResult;
+	}
+
+}

@@ -1,4 +1,4 @@
-package com.pine.sparrow.bean;
+package com.pine.sparrow.bean.result;
 
 import java.util.HashMap;
 import java.util.Map;
